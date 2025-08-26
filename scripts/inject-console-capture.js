@@ -1,5 +1,5 @@
-const fs = require('fs');
-const path = require('path');
+import fs from 'fs';
+import path from 'path';
 
 const SCRIPT_TAG = '<script src="/dashboard-console-capture.js"></script>';
 
