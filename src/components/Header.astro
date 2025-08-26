@@ -1,0 +1,108 @@
+---
+// src/components/Header.astro
+---
+
+<header class="sticky top-0 z-40 bg-white/95 backdrop-blur-sm border-b border-gray-200">
+  <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    <div class="flex justify-between items-center h-16">
+      <!-- Logo/Name -->
+      <div class="flex-shrink-0">
+        <a href="/" class="text-xl font-bold text-gray-900 hover:text-primary-600 transition-colors">
+          Alex Developer
+        </a>
+      </div>
+
+      <!-- Desktop Navigation -->
+      <div class="hidden md:block">
+        <div class="ml-10 flex items-baseline space-x-8">
+          <a href="#about" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            About
+          </a>
+          <a href="#projects" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            Projects
+          </a>
+          <a href="#skills" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            Skills
+          </a>
+          <a href="#experience" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            Experience
+          </a>
+          <a href="#testimonials" class="text-gray-600 hover:text-gray-900 px-3 py-2 text-sm font-medium transition-colors">
+            Testimonials
+          </a>
+          <a href="#contact" class="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors">
+            Contact
+          </a>
+        </div>
+      </div>
+
+      <!-- Mobile menu button -->
+      <div class="md:hidden">
+        <button id="mobile-menu-btn" type="button" class="text-gray-600 hover:text-gray-900 focus:outline-none focus:text-gray-900">
+          <svg class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+          </svg>
+        </button>
+      </div>
+    </div>
+
+    <!-- Mobile menu -->
+    <div id="mobile-menu" class="md:hidden hidden">
+      <div class="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-200">
+        <a href="#about" class="text-gray-600 hover:text-gray-900 block px-3 py-2 text-base font-medium transition-colors">
+          About
+        </a>
+        <a href="#projects" class="text-gray-600 hover:text-gray-900 block px-3 py-2 text-base font-medium transition-colors">
+          Projects
+        </a>
+        <a href="#skills" class="text-gray-600 hover:text-gray-900 block px-3 py-2 text-base font-medium transition-colors">
+          Skills
+        </a>
+        <a href="#experience" class="text-gray-600 hover:text-gray-900 block px-3 py-2 text-base font-medium transition-colors">
+          Experience
+        </a>
+        <a href="#testimonials" class="text-gray-600 hover:text-gray-900 block px-3 py-2 text-base font-medium transition-colors">
+          Testimonials
+        </a>
+        <a href="#contact" class="bg-primary-600 text-white block px-3 py-2 rounded-lg text-base font-medium hover:bg-primary-700 transition-colors text-center">
+          Contact
+        </a>
+      </div>
+    </div>
+  </nav>
+</header>
+
+<script>
+  // Mobile menu toggle
+  const mobileMenuBtn = document.getElementById('mobile-menu-btn');
+  const mobileMenu = document.getElementById('mobile-menu');
+  
+  if (mobileMenuBtn && mobileMenu) {
+    mobileMenuBtn.addEventListener('click', () => {
+      mobileMenu.classList.toggle('hidden');
+    });
+  }
+
+  // Smooth scrolling for anchor links
+  document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+    anchor.addEventListener('click', function (e) {
+      e.preventDefault();
+      const target = document.querySelector(this.getAttribute('href'));
+      if (target) {
+        const headerOffset = 80;
+        const elementPosition = target.offsetTop;
+        const offsetPosition = elementPosition - headerOffset;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+
+        // Close mobile menu if open
+        if (mobileMenu && !mobileMenu.classList.contains('hidden')) {
+          mobileMenu.classList.add('hidden');
+        }
+      }
+    });
+  });
+</script>

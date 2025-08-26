@@ -1,0 +1,234 @@
+---
+// src/pages/index.astro
+import Layout from '../layouts/Layout.astro';
+import Header from '../components/Header.astro';
+import Hero from '../components/Hero.astro';
+import ProjectCard from '../components/ProjectCard.astro';
+import SkillCard from '../components/SkillCard.astro';
+import TestimonialCard from '../components/TestimonialCard.astro';
+import WorkExperienceCard from '../components/WorkExperienceCard.astro';
+import Footer from '../components/Footer.astro';
+
+import { getProjects, getSkillsByCategory, getWorkExperience, getTestimonials } from '../lib/cosmic';
+
+// Fetch all data at build time
+const [projects, skillsByCategory, workExperience, testimonials] = await Promise.all([
+  getProjects(),
+  getSkillsByCategory(),
+  getWorkExperience(),
+  getTestimonials()
+]);
+
+// Get category display names and order
+const categoryOrder = ['languages', 'frameworks', 'tools', 'databases', 'design'];
+const categoryNames = {
+  languages: 'Programming Languages',
+  frameworks: 'Frameworks & Libraries', 
+  tools: 'Tools & Platforms',
+  databases: 'Databases',
+  design: 'Design & UI/UX'
+};
+
+// Filter featured content
+const featuredProjects = projects.filter(p => p.metadata?.featured === true);
+const featuredTestimonials = testimonials.filter(t => t.metadata?.featured === true);
+---
+
+<Layout 
+  title="Alex Developer - Full Stack Developer Portfolio" 
+  description="Professional web developer portfolio showcasing projects, skills, work experience, and client testimonials. Specializing in React, Node.js, and modern web technologies."
+>
+  <Header />
+  <Hero />
+
+  <main>
+    <!-- About Section -->
+    <section id="about" class="py-20 bg-gray-50">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="text-center mb-16">
+          <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">About Me</h2>
+          <p class="text-xl text-gray-600 max-w-3xl mx-auto">
+            I'm a passionate full-stack developer with extensive experience in building modern web applications. 
+            I love working with cutting-edge technologies and creating solutions that make a real impact.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- Featured Projects Section -->
+    {featuredProjects.length > 0 && (
+      <section id="projects" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Featured Projects</h2>
+            <p class="text-xl text-gray-600">
+              Some of my best work showcasing different technologies and approaches
+            </p>
+          </div>
+          
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {featuredProjects.map((project) => (
+              <ProjectCard project={project} featured={true} />
+            ))}
+          </div>
+          
+          {projects.length > featuredProjects.length && (
+            <div class="text-center mt-12">
+              <a 
+                href="#all-projects" 
+                class="inline-flex items-center gap-2 bg-primary-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-primary-700 transition-colors"
+              >
+                View All Projects
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path>
+                </svg>
+              </a>
+            </div>
+          )}
+        </div>
+      </section>
+    )}
+
+    <!-- All Projects Section -->
+    {projects.length > 0 && (
+      <section id="all-projects" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">All Projects</h2>
+            <p class="text-xl text-gray-600">
+              A comprehensive look at my development work
+            </p>
+          </div>
+          
+          <div class="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            {projects.map((project) => (
+              <ProjectCard project={project} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Skills Section -->
+    {Object.keys(skillsByCategory).length > 0 && (
+      <section id="skills" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Skills & Technologies</h2>
+            <p class="text-xl text-gray-600">
+              Technologies and tools I use to bring ideas to life
+            </p>
+          </div>
+
+          <div class="space-y-12">
+            {categoryOrder
+              .filter(categoryKey => {
+                const skills = skillsByCategory[categoryKey];
+                return skills && skills.length > 0;
+              })
+              .map((categoryKey) => {
+                const skills = skillsByCategory[categoryKey];
+                
+                if (!skills || skills.length === 0) {
+                  return null;
+                }
+                
+                return (
+                  <div key={categoryKey}>
+                    <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
+                      {categoryNames[categoryKey as keyof typeof categoryNames] || categoryKey}
+                    </h3>
+                    <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                      {skills.map((skill) => (
+                        <SkillCard key={skill.id} skill={skill} />
+                      ))}
+                    </div>
+                  </div>
+                );
+              })
+            }
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Work Experience Section -->
+    {workExperience.length > 0 && (
+      <section id="experience" class="py-20 bg-gray-50">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">Work Experience</h2>
+            <p class="text-xl text-gray-600">
+              My professional journey and key achievements
+            </p>
+          </div>
+          
+          <div class="space-y-8 max-w-4xl mx-auto">
+            {workExperience.map((experience) => (
+              <WorkExperienceCard key={experience.id} experience={experience} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Testimonials Section -->
+    {testimonials.length > 0 && (
+      <section id="testimonials" class="py-20">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div class="text-center mb-16">
+            <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-4">What People Say</h2>
+            <p class="text-xl text-gray-600">
+              Testimonials from clients and colleagues I've worked with
+            </p>
+          </div>
+          
+          <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
+            {(featuredTestimonials.length > 0 ? featuredTestimonials : testimonials.slice(0, 6)).map((testimonial) => (
+              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Contact Section -->
+    <section id="contact" class="py-20 bg-primary-600">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+        <h2 class="text-3xl md:text-4xl font-bold text-white mb-4">Let's Work Together</h2>
+        <p class="text-xl text-primary-100 mb-8 max-w-2xl mx-auto">
+          I'm always interested in new opportunities and exciting projects. 
+          Let's discuss how I can help bring your ideas to life.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center items-center">
+          <a 
+            href="mailto:alex@example.com"
+            class="bg-white text-primary-600 px-8 py-3 rounded-lg font-medium hover:bg-primary-50 transition-all duration-300 hover:scale-105"
+          >
+            Get In Touch
+          </a>
+          <a 
+            href="/resume.pdf"
+            target="_blank"
+            rel="noopener noreferrer"
+            class="border-2 border-white text-white px-8 py-3 rounded-lg font-medium hover:bg-white hover:text-primary-600 transition-all duration-300"
+          >
+            Download Resume
+          </a>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</Layout>
+
+<style>
+  .line-clamp-3 {
+    display: -webkit-box;
+    -webkit-line-clamp: 3;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+  }
+</style>

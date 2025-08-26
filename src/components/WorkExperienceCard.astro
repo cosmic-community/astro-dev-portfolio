@@ -1,0 +1,108 @@
+---
+// src/components/WorkExperienceCard.astro
+import type { WorkExperience } from '../types';
+
+export interface Props {
+  experience: WorkExperience;
+}
+
+const { experience } = Astro.props;
+const startDate = experience.metadata?.start_date ? new Date(experience.metadata.start_date) : null;
+const endDate = experience.metadata?.end_date ? new Date(experience.metadata.end_date) : null;
+const isCurrentJob = experience.metadata?.current_job === true;
+const logo = experience.metadata?.company_logo;
+const achievements = experience.metadata?.achievements?.split('\n').filter(a => a.trim()) || [];
+const technologies = experience.metadata?.technologies?.split(',').map(t => t.trim()) || [];
+
+// Format date
+const formatDate = (date: Date | null) => {
+  if (!date) return null;
+  return date.toLocaleDateString('en-US', { year: 'numeric', month: 'short' });
+};
+
+const startDateFormatted = formatDate(startDate);
+const endDateFormatted = isCurrentJob ? 'Present' : formatDate(endDate);
+---
+
+<div class="bg-white rounded-xl shadow-lg p-6 hover:shadow-xl transition-all duration-300">
+  <div class="flex items-start mb-4">
+    {logo && (
+      <div class="w-16 h-16 rounded-lg overflow-hidden mr-4 flex-shrink-0 bg-gray-100">
+        <img 
+          src={`${logo.imgix_url}?w=128&h=128&fit=crop&auto=format,compress`}
+          alt={`${experience.metadata?.company_name || 'Company'} logo`}
+          width="64"
+          height="64"
+          class="w-full h-full object-cover"
+          loading="lazy"
+        />
+      </div>
+    )}
+    
+    <div class="flex-1">
+      <h3 class="text-xl font-bold text-gray-900 mb-1">
+        {experience.metadata?.job_title || experience.title}
+      </h3>
+      
+      <div class="flex items-center text-gray-600 mb-2">
+        {experience.metadata?.company_website ? (
+          <a 
+            href={experience.metadata.company_website}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="font-semibold hover:text-primary-600 transition-colors"
+          >
+            {experience.metadata?.company_name || 'Company'}
+          </a>
+        ) : (
+          <span class="font-semibold">
+            {experience.metadata?.company_name || 'Company'}
+          </span>
+        )}
+        
+        {isCurrentJob && (
+          <span class="ml-2 bg-green-100 text-green-800 text-xs font-medium px-2.5 py-0.5 rounded-full">
+            Current
+          </span>
+        )}
+      </div>
+      
+      <div class="text-sm text-gray-500 mb-4">
+        {startDateFormatted} - {endDateFormatted}
+      </div>
+    </div>
+  </div>
+  
+  {experience.metadata?.description && (
+    <p class="text-gray-700 mb-4 leading-relaxed">
+      {experience.metadata.description}
+    </p>
+  )}
+  
+  {achievements.length > 0 && (
+    <div class="mb-4">
+      <h4 class="font-semibold text-gray-900 mb-2">Key Achievements:</h4>
+      <ul class="space-y-1">
+        {achievements.map(achievement => (
+          <li class="text-gray-700 text-sm flex items-start">
+            <span class="text-primary-600 mr-2 mt-1 flex-shrink-0">•</span>
+            <span>{achievement.replace(/^[•\-\*]\s*/, '')}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  )}
+  
+  {technologies.length > 0 && (
+    <div>
+      <h4 class="font-semibold text-gray-900 mb-2">Technologies:</h4>
+      <div class="flex flex-wrap gap-2">
+        {technologies.map(tech => (
+          <span class="bg-gray-100 text-gray-700 text-xs font-medium px-2.5 py-1 rounded-full">
+            {tech}
+          </span>
+        ))}
+      </div>
+    </div>
+  )}
+</div>
