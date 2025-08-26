@@ -1,5 +1,4 @@
 ---
-// src/layouts/Layout.astro
 export interface Props {
   title: string;
   description?: string;
@@ -48,7 +47,7 @@ const bucketSlug = import.meta.env.COSMIC_BUCKET_SLUG;
     <!-- Built with Cosmic Badge -->
     <div id="cosmic-badge-container"></div>
     
-    <script define:vars={{ bucketSlug }}>
+    <script define:vars={{ bucketSlug }} is:inline>
       // Create the cosmic badge element after page load
       document.addEventListener('DOMContentLoaded', () => {
         const createCosmicBadge = () => {

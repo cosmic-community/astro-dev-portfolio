@@ -1,5 +1,4 @@
 ---
-// src/pages/index.astro
 import Layout from '../layouts/Layout.astro';
 import Header from '../components/Header.astro';
 import Hero from '../components/Hero.astro';
@@ -134,13 +133,13 @@ const featuredTestimonials = testimonials.filter(t => t.metadata?.featured === t
                 }
                 
                 return (
-                  <div key={categoryKey}>
+                  <div>
                     <h3 class="text-2xl font-bold text-gray-900 mb-6 text-center">
                       {categoryNames[categoryKey as keyof typeof categoryNames] || categoryKey}
                     </h3>
                     <div class="grid gap-4 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                       {skills.map((skill) => (
-                        <SkillCard key={skill.id} skill={skill} />
+                        <SkillCard skill={skill} />
                       ))}
                     </div>
                   </div>
@@ -165,7 +164,7 @@ const featuredTestimonials = testimonials.filter(t => t.metadata?.featured === t
           
           <div class="space-y-8 max-w-4xl mx-auto">
             {workExperience.map((experience) => (
-              <WorkExperienceCard key={experience.id} experience={experience} />
+              <WorkExperienceCard experience={experience} />
             ))}
           </div>
         </div>
@@ -185,7 +184,7 @@ const featuredTestimonials = testimonials.filter(t => t.metadata?.featured === t
           
           <div class="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
             {(featuredTestimonials.length > 0 ? featuredTestimonials : testimonials.slice(0, 6)).map((testimonial) => (
-              <TestimonialCard key={testimonial.id} testimonial={testimonial} />
+              <TestimonialCard testimonial={testimonial} />
             ))}
           </div>
         </div>

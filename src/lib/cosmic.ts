@@ -87,19 +87,23 @@ export async function getSkillsByCategory(): Promise<Record<string, Skill[]>> {
     
     // Sort skills within each category by proficiency and years of experience
     Object.keys(grouped).forEach(category => {
-      grouped[category].sort((a, b) => {
-        const proficiencyOrder = { expert: 4, advanced: 3, intermediate: 2, beginner: 1 };
-        const aProficiency = proficiencyOrder[a.metadata?.proficiency?.key as keyof typeof proficiencyOrder] || 0;
-        const bProficiency = proficiencyOrder[b.metadata?.proficiency?.key as keyof typeof proficiencyOrder] || 0;
-        
-        if (aProficiency !== bProficiency) {
-          return bProficiency - aProficiency;
-        }
-        
-        const aYears = a.metadata?.years_experience || 0;
-        const bYears = b.metadata?.years_experience || 0;
-        return bYears - aYears;
-      });
+      // FIXED: Add null check before calling sort to prevent TS2532 error
+      const categorySkills = grouped[category];
+      if (categorySkills && categorySkills.length > 0) {
+        categorySkills.sort((a, b) => {
+          const proficiencyOrder = { expert: 4, advanced: 3, intermediate: 2, beginner: 1 };
+          const aProficiency = proficiencyOrder[a.metadata?.proficiency?.key as keyof typeof proficiencyOrder] || 0;
+          const bProficiency = proficiencyOrder[b.metadata?.proficiency?.key as keyof typeof proficiencyOrder] || 0;
+          
+          if (aProficiency !== bProficiency) {
+            return bProficiency - aProficiency;
+          }
+          
+          const aYears = a.metadata?.years_experience || 0;
+          const bYears = b.metadata?.years_experience || 0;
+          return bYears - aYears;
+        });
+      }
     });
     
     return grouped;
